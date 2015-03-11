@@ -3,7 +3,8 @@ import sys
 import json
 
 def main(argv):
-  inputfileName = argv[0]
+  location = argv[0]
+  inputfileName = location + "Raw.json"
 
   json_data = open(inputfileName)
 
@@ -26,6 +27,10 @@ def main(argv):
 
   print len(rawData)
   print len(cleanData)
+
+  outputfile = location + "Clean.json"
+  with open(outputfile, 'w') as outfile:
+    json.dump(cleanData, outfile)
 
   json_data.close()
 
