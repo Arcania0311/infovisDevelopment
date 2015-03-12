@@ -23,7 +23,6 @@ def main(argv):
       cleanData.append(item)
       prevCreated = item["created_at"]
       prevMsg = item["payload_commit_msg"]
-      print item
 
   print len(rawData)
   print len(cleanData)
