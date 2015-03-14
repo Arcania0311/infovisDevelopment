@@ -27,7 +27,7 @@ def main(argv):
   print len(rawData)
   print len(cleanData)
 
-  outputfile = location + "Clean.json"
+  outputfile = location + "/" + location + "Clean.json"
   with open(outputfile, 'w') as outfile:
     json.dump(cleanData, outfile)
 
