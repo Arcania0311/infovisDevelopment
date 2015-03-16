@@ -1,1 +1,0 @@
-[{  "Location" : "Amsterdam",  "Query" : "SELECT created_at, actor_attributes_login, repository_language, payload_commit_msg FROM [githubarchive:github.timeline] WHERE actor_attributes_location LIKE '%Amsterdam%' AND type = 'PushEvent' AND repository_language IS NOT NULL ORDER BY created_at ASC;",  "JobID" : "bqjob_r261389de5671f432_0000014c0ab58d4f_1"  }]
