@@ -55,13 +55,16 @@ def main(argv):
 
 
   # Append users per city to json
-  with open("usersPerCity.json", 'r') as infile:
-    outUsers = json.load(infile)
-    outUsers.update({location : len(users)})
+  with open("totalsPerCity.json", 'r') as infile:
+    outTotals = json.load(infile)
+    totalCommits = len(rawData)
+    totalUsers = len(users)
+    totalCpU = round(float(totalCommits) / float(totalUsers), 2)
+    outTotals.update({location : {"commits" : totalCommits, "users" : totalUsers, "commitsPerUser" : totalCpU}})
 
-  with open("usersPerCity.json", 'w') as outfile:
-    json.dump(outUsers, outfile)
-    print "Finished total users."
+  with open("totalsPerCity.json", 'w') as outfile:
+    json.dump(outTotals, outfile)
+    print "Finished totals."
 
 
   # Users per language
