@@ -25,6 +25,7 @@ def main(argv):
       day.append(0)
 
   # Commits per language per user & acivity through the day
+  print "Processing users and activity..."
   for item in rawData:
     dateTime = convertDate(item["created_at"])
     activity[dateTime.weekday()][dateTime.hour] += 1
@@ -49,6 +50,7 @@ def main(argv):
   outActivity = location + "/" + location + "Activity.json"
   with open(outActivity, "w") as outfile:
     json.dump(activity, outfile)
+    print "Finished activity."
 
 
   # Append users per city to json
@@ -58,9 +60,11 @@ def main(argv):
 
   with open("usersPerCity.json", 'w') as outfile:
     json.dump(outUsers, outfile)
+    print "Finished total users."
 
 
   # Users per language
+  print "Processing language data."
   for item in users:
     for lang in users[item]:
       if lang in languages:
@@ -77,6 +81,7 @@ def main(argv):
   outLanguages = location + "/" + location + "Languages.json"
   with open(outLanguages, "w") as outfile:
     json.dump(languages, outfile)
+    print "Finished languages."
 
 if __name__ == "__main__":
   main(sys.argv[1:])
