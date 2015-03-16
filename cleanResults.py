@@ -24,8 +24,8 @@ def main(argv):
       prevCreated = item["created_at"]
       prevMsg = item["payload_commit_msg"]
 
-  print "Items before cleanup: " + len(rawData)
-  print "Items after cleanup:  " + len(cleanData)
+  print "Items before cleanup: " + str(len(rawData))
+  print "Items after cleanup:  " + str(len(cleanData))
 
   outputfile = location + "/" + location + "Clean.json"
   with open(outputfile, 'w') as outfile:
