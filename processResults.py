@@ -9,7 +9,8 @@ def convertDate(date):
 
 def main(argv):
   location = argv[0]
-  inputfileName = location + "/" + location + "Clean.json"
+  filepath = "results/" + location + "/" + location
+  inputfileName =  filepath + "Clean.json"
 
   json_data = open(inputfileName)
   rawData = json.load(json_data)
@@ -47,7 +48,7 @@ def main(argv):
     day.append(total)
 
   # Append activity per day/hour to json
-  outActivity = location + "/" + location + "Activity.json"
+  outActivity = filepath + "Activity.json"
   with open(outActivity, "w") as outfile:
     json.dump(activity, outfile)
     print "Finished activity."
@@ -78,7 +79,7 @@ def main(argv):
   for lang in languages:
     languages[lang]["commitsPerUser"] = round(float(languages[lang]["commits"]) / float(languages[lang]["users"]), 2)
 
-  outLanguages = location + "/" + location + "Languages.json"
+  outLanguages = filepath + "Languages.json"
   with open(outLanguages, "w") as outfile:
     json.dump(languages, outfile)
     print "Finished languages."

@@ -27,7 +27,7 @@ def main(argv):
   print "Items before cleanup: " + str(len(rawData))
   print "Items after cleanup:  " + str(len(cleanData))
 
-  outputfile = location + "/" + location + "Clean.json"
+  outputfile = "results/" + location + "/" + location + "Clean.json"
   with open(outputfile, 'w') as outfile:
     json.dump(cleanData, outfile)
 
