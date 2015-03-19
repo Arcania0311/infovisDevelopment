@@ -15,7 +15,7 @@ Data processing for our group project in the 2015 Information Visualisation cour
   * */*Activity.json  
     Contains a list with the activity per weekday, so that [0] is Monday and [6] is Sunday. Every day is a list with 25 entries, so that day[0] is 0-1 o'clock, day[23] is 23-24 o'clock, and day[24] is the total activity of that weekday.
 * radar.py  
-  Script to transform the data for diplay in the radar graph, and in the future also the other elements of the visualisation, such as the bar charts.
+  Script to transform the data for diplay in the radar graph, and in the future also the other elements of the visualisation.
 * tod3.py  
   Script to transform total datafiles into a d3 force graph friendly format.
 * sample.json  

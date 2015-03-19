@@ -2,11 +2,8 @@ import json
 
 finalData = {}
 
-finalData["radar"] = {}
-finalData["bars"] = {}
-
-finalData["radar"]["cities"] = []
-finalData["radar"]["languages"] = []
+finalData["cities"] = []
+finalData["languages"] = []
 
 # Temporary dict to store languages to reduce loops
 langDict = {}
@@ -50,7 +47,7 @@ for city in cityData:
     langDict[lang][city]["commits"] = cityLangData[lang]["commits"]
     langDict[lang][city]["commitsPerUser"] = cityLangData[lang]["commitsPerUser"]
 
-  finalData["radar"]["cities"].append(tempCity)
+  finalData["cities"].append(tempCity)
 
 for lang in langDict:
   tempLang = {}
@@ -68,7 +65,9 @@ for lang in langDict:
 
     tempLang["cities"].append(tempLangCity)
 
-  finalData["radar"]["languages"].append(tempLang)
+  finalData["languages"].append(tempLang)
+
+print finalData
 
 outFinal = "dataRadar.json"
 with open(outFinal, "w") as outfile:
