@@ -21,6 +21,7 @@ for city in cityData:
   tempCity["name"] = city
   tempCity["users"] = cityData[city]["users"]
   tempCity["commits"] = cityData[city]["commits"]
+  tempCity["commitsPerUser"] = cityData[city]["commitsPerUser"]
   tempCity["langs"] = []
 
   cityLangFilePath = "results/" + city + "/" + city + "Languages.json"
@@ -54,6 +55,7 @@ for lang in langDict:
   tempLang["name"] = lang
   tempLang["users"] = langData[lang]["users"]
   tempLang["commits"] = langData[lang]["commits"]
+  tempLang["commitsPerUser"] = langData[lang]["commitsPerUser"]
   tempLang["cities"] = []
 
   for city in langDict[lang]:
@@ -66,8 +68,6 @@ for lang in langDict:
     tempLang["cities"].append(tempLangCity)
 
   finalData["languages"].append(tempLang)
-
-print finalData
 
 outFinal = "dataRadar.json"
 with open(outFinal, "w") as outfile:
