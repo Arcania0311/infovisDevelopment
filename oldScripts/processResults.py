@@ -9,7 +9,7 @@ def convertDate(date):
 
 def main(argv):
   location = argv[0]
-  filepath = "results/" + location + "/" + location
+  filepath = "../results/" + location + "/" + location
   inputfileName =  filepath + "Clean.json"
 
   json_data = open(inputfileName)
@@ -55,14 +55,14 @@ def main(argv):
 
 
   # Append users per city to json
-  with open("totalsPerCity.json", 'r') as infile:
+  with open("../totalsPerCity.json", 'r') as infile:
     outTotals = json.load(infile)
     totalCommits = len(rawData)
     totalUsers = len(users)
     totalCpU = round(float(totalCommits) / float(totalUsers), 2)
     outTotals.update({location : {"commits" : totalCommits, "users" : totalUsers, "commitsPerUser" : totalCpU}})
 
-  with open("totalsPerCity.json", 'w') as outfile:
+  with open("../totalsPerCity.json", 'w') as outfile:
     json.dump(outTotals, outfile)
     print "Finished totals."
 

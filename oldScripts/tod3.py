@@ -7,11 +7,11 @@ finalData["links"] = []
 
 IDs = {}
 
-langFile = open("totalsPerLanguage.json")
+langFile = open("../totalsPerLanguage.json")
 langData = json.load(langFile)
 langFile.close()
 
-cityFile = open("totalsPerCity.json")
+cityFile = open("../totalsPerCity.json")
 cityData = json.load(cityFile)
 cityFile.close()
 
@@ -49,7 +49,7 @@ for lang in langData:
 
 # Create links
 for city in cityData:
-  cityLangFilePath = "results/" + city + "/" + city + "Languages.json"
+  cityLangFilePath = "../results/" + city + "/" + city + "Languages.json"
   cityLangFile = open(cityLangFilePath)
   cityLangData = json.load(cityLangFile)
   cityLangFile.close()
@@ -65,7 +65,7 @@ for city in cityData:
 
     finalData["links"].append(tempLink)
 
-outFinal = "data.json"
+outFinal = "../data.json"
 with open(outFinal, "w") as outfile:
   json.dump(finalData, outfile)
   print "Finished all the things."

@@ -8,11 +8,11 @@ finalData["languages"] = []
 # Temporary dict to store languages to reduce loops
 langDict = {}
 
-langFile = open("totalsPerLanguage.json")
+langFile = open("../totalsPerLanguage.json")
 langData = json.load(langFile)
 langFile.close()
 
-cityFile = open("totalsPerCity.json")
+cityFile = open("../totalsPerCity.json")
 cityData = json.load(cityFile)
 cityFile.close()
 
@@ -24,7 +24,7 @@ for city in cityData:
   tempCity["commitsPerUser"] = cityData[city]["commitsPerUser"]
   tempCity["langs"] = []
 
-  cityLangFilePath = "results/" + city + "/" + city + "Languages.json"
+  cityLangFilePath = "../results/" + city + "/" + city + "Languages.json"
   cityLangFile = open(cityLangFilePath)
   cityLangData = json.load(cityLangFile)
   cityLangFile.close()
@@ -69,6 +69,6 @@ for lang in langDict:
 
   finalData["languages"].append(tempLang)
 
-outFinal = "dataRadar.json"
+outFinal = "../dataRadar.json"
 with open(outFinal, "w") as outfile:
   json.dump(finalData, outfile)
