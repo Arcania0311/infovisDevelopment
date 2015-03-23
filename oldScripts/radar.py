@@ -48,6 +48,21 @@ for city in cityData:
     langDict[lang][city]["commits"] = cityLangData[lang]["commits"]
     langDict[lang][city]["commitsPerUser"] = cityLangData[lang]["commitsPerUser"]
 
+  for lang in langData:
+    found = False
+    for cityLang in tempCity["langs"]:
+      if cityLang["name"] == lang:
+        found = True
+
+    if not found:
+      tempCityLang = {}
+      tempCityLang["name"] = lang
+      tempCityLang["users"] = 0
+      tempCityLang["commits"] = 0
+      tempCityLang["commitsPerUser"] = 0
+
+      tempCity["langs"].append(tempCityLang)
+
   finalData["cities"].append(tempCity)
 
 for lang in langDict:
@@ -66,6 +81,21 @@ for lang in langDict:
     tempLangCity["commitsPerUser"] = langDict[lang][city]["commitsPerUser"]
 
     tempLang["cities"].append(tempLangCity)
+
+  for city in cityData:
+    found = False
+    for langCity in tempLang["cities"]:
+      if city == langCity["name"]:
+        found = True
+
+    if not found:
+      tempLangCity = {}
+      tempLangCity["name"] = city
+      tempLangCity["users"] = 0
+      tempLangCity["commits"] = 0
+      tempLangCity["commitsPerUser"] = 0
+
+      tempLang["cities"].append(tempLangCity)    
 
   finalData["languages"].append(tempLang)
 
