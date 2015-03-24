@@ -99,6 +99,16 @@ for lang in langDict:
 
   finalData["languages"].append(tempLang)
 
+i = 0
+for city in finalData["cities"]:
+  city["ID"] = i
+  i += 1
+
+i = 0
+for lang in finalData["languages"]:
+  lang["ID"] = i
+  i += 1
+
 outFinal = "../dataRadar.json"
 with open(outFinal, "w") as outfile:
   json.dump(finalData, outfile)
