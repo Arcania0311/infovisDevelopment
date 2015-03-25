@@ -19,36 +19,49 @@ def newDay():
 topLangs = {"JavaScript", "Ruby", "Python", "Java", "PHP", "CSS", "Shell", "C++", "C", "Objective-C"}
 weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
-citiesData = {"Mon" : {}, "Tue" : {}, "Wed" : {}, "Thu" : {}, "Fri" : {}, "Sat" : {}, "Sun" : {}}
+cityFile = open("totalsPerCity.json")
+cityData = json.load(cityFile)
+cityFile.close()
 
-for days in citiesData:
-  citiesData[days]["hours"] = newDay()
+finalData = {}
 
-location = "moon"
-filepath = "results/" + location + "/" + location + "Clean.json"
+for city in cityData:
 
-json_data = open(filepath)
-cleanData = json.load(json_data)
-json_data.close()
+  citiesData = {"Mon" : {}, "Tue" : {}, "Wed" : {}, "Thu" : {}, "Fri" : {}, "Sat" : {}, "Sun" : {}}
 
-for item in cleanData:
-  lang = item["repository_language"]
+  for days in citiesData:
+    for lang in topLangs:
+      citiesData[days][lang] = {}
+      citiesData[days][lang]["name"] = lang
+      citiesData[days][lang]["hours"] = newDay()
 
-  if lang not in topLangs:
-    continue
+  filepath = "results/" + city + "/" + city + "Clean.json"
 
-  dateTime = convertDate(item["created_at"])
-  day = weekDays[dateTime.weekday() - 1]
-  
-  citiesData[day]["hours"][dateTime.hour]["commits"] += 1
+  json_data = open(filepath)
+  cleanData = json.load(json_data)
+  json_data.close()
 
-for day in weekDays:
-  dailyTotal = 0
-  for hour in citiesData[day]["hours"]:
-    dailyTotal += hour["commits"]
+  for item in cleanData:
+    lang = item["repository_language"]
 
-  citiesData[day]["total"] = {"commits" : round(float(dailyTotal) / 24.0, 2)}
+    if lang not in topLangs:
+      continue
+
+    dateTime = convertDate(item["created_at"])
+    day = weekDays[dateTime.weekday() - 1]
+    
+    citiesData[day][lang]["hours"][dateTime.hour]["commits"] += 1
+
+  for day in weekDays:
+    dailyTotal = 0
+    for lang in topLangs:
+      for hour in citiesData[day][lang]["hours"]:
+        dailyTotal += hour["commits"]
+
+      citiesData[day][lang]["total"] = round(float(dailyTotal) / 24.0, 2)
+
+  finalData[city] = citiesData
 
 outFinal = "asterPlot/dataTest.json"
 with open(outFinal, "w") as outfile:
-  json.dump(citiesData, outfile)
+  json.dump(finalData, outfile)
