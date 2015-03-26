@@ -1,5 +1,3 @@
-var arc;
-
 function AsterPlot () {
   this.width = 600;
   this.height = 600;
@@ -26,12 +24,12 @@ function AsterPlot () {
     .value(function(d) { return 10; });
 
   // Tooltips are awesome.
-  this.tip = d3.tip()
-    .attr('class', 'd3-tip')
-    .offset([0, 0])
-    .html(function (d) {
-      return d.data.name + ": <span style='color:green'>" + d.data.days[self.selectedDay] + "</span>";
-    });
+  // this.tip = d3.tip()
+  //   .attr('class', 'd3-tip')
+  //   .offset([0, 0])
+  //   .html(function (d) {
+  //     return d.data.name + ": <span style='color:green'>" + d.data.days[self.selectedDay] + "</span>";
+  //   });
 
   // d3 arc objects.
   this.arc = d3.svg.arc()
@@ -39,7 +37,6 @@ function AsterPlot () {
     .outerRadius(function(d) {
       return (((self.radius - self.innerRadius) / self.largest) * d.data.days[self.selectedDay]) + self.innerRadius; 
     });
-  arc = this.arc;
 
   this.outlineArc = d3.svg.arc()
     .innerRadius(this.innerRadius)
@@ -52,7 +49,7 @@ function AsterPlot () {
     .append("g")
     .attr("transform", "translate(" + this.width / 2 + "," + this.height / 2 + ")");
 
-  this.svg.call(this.tip);
+  // this.svg.call(this.tip);
 
   // Empty array to limit chart to 24 areas.
   this.hours = [];
@@ -82,25 +79,55 @@ function AsterPlot () {
  */
 AsterPlot.prototype.selectDay = function(day) {
   this.selectedDay = this.week.indexOf(day);
-  this.change();
+  this.changeDay();
 }
 
 /* * * * *
  * Updates the graph with the newly selected data.
  */
-AsterPlot.prototype.change = function() {
+AsterPlot.prototype.changeDay = function() {
+  var self = this;
+
   var path = this.svg.selectAll(".solidArc")
       .data(this.pie(this.selectedData));
-  path.transition().duration(750).attrTween("d", this.arcTween);
+  path.transition().duration(750).attrTween("d", function (a) {
+
+    var i = d3.interpolate(this._current, a);
+    this._current = i(0);
+    return function(t) {
+      return self.arc(i(t));
+    };
+  });
 }
 
-AsterPlot.prototype.arcTween = function (a) {
+AsterPlot.prototype.change = function () {
+  var self = this;
 
-  var i = d3.interpolate(this._current, a);
-  this._current = i(0);
-  return function(t) {
-    return arc(i(t));
-  };
+  var path = this.svg.selectAll(".solidArc")
+    .data(this.pie(this.selectedData));
+
+  path.enter().append("path")
+    .attr("fill", function (d) { return "blue" })
+    .attr("class", "solidArc")
+      .attr("d", this.arc)
+      .each(function(d) { this._current = {
+          data : d.data,
+          value : d.value,
+          startAngle : d.startAngle,
+          endAngle : d.endAngle    
+        }; 
+      });
+
+  path.exit().remove();
+
+  path.transition().duration(750).attrTween("d", function (a) {
+
+    var i = d3.interpolate(this._current, a);
+    this._current = i(0);
+    return function(t) {
+      return self.arc(i(t));
+    };
+  });
 }
 
 /* * * * *
@@ -151,9 +178,9 @@ AsterPlot.prototype.drawGraph = function () {
       .attr("fill", function (d) { return "red"; })
       .attr("class", "solidArc")
       .attr("d", this.arc)
-      .each(function(d) { this._current = d; })
-      .on('mouseover', this.tip.show)
-      .on('mouseout', this.tip.hide);
+      .each(function(d) { this._current = d; });
+      // .on('mouseover', this.tip.show)
+      // .on('mouseout', this.tip.hide);
 
   // Create a thick white outline to give the impression hours are seperated.
   var outerPath = this.svg.selectAll(".outlineArc")
