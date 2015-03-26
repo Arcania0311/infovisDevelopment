@@ -44,7 +44,7 @@ function AsterPlot (container) {
       if (!this.relative) {
         return (((self.radius - self.innerRadius) / self.largest) * d.data.days[self.selectedDay]) + self.innerRadius; 
       } else {
-        return (((self.radius - self.innerRadius) / self.relLargest[d.data.colour]) * d.data.days[self.selectedDay]) + self.innerRadius;
+        return (((self.radius - self.innerRadius) / self.relLargest[d.data.maxIndex]) * d.data.days[self.selectedDay]) + self.innerRadius;
       }
     });
 
@@ -218,6 +218,7 @@ AsterPlot.prototype.selectData = function(selection) {
       
       this.selectedData.push(
         {"name" : selection.cities[city].name,
+         "maxIndex" : city,
          "colour" : selection.cities[city].ID,
          "days" : hourCommits.slice(0)
       });
