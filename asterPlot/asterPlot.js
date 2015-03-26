@@ -137,10 +137,15 @@ AsterPlot.prototype.change = function () {
   var self = this;
 
   var path = this.svg.selectAll(".solidArc")
+    .data(this.pie([]));
+
+  path.exit().remove();
+
+  var path = this.svg.selectAll(".solidArc")
     .data(this.pie(this.selectedData));
 
   path.enter().append("path")
-    .attr("fill", function (d) { return "blue" })
+    .attr("fill", function (d) { return self.colourScale(d.data.colour); })
     .attr("class", "solidArc")
     .attr("d", this.arc)
     .each(function(d) { this._current = {
@@ -149,9 +154,9 @@ AsterPlot.prototype.change = function () {
         startAngle : d.startAngle,
         endAngle : d.endAngle    
       }; 
-    });
-
-  path.exit().remove();
+    })
+    .on('mouseover', this.tip.show)
+    .on('mouseout', this.tip.hide);
 
   path.transition().duration(750).attrTween("d", function (a) {
 
@@ -161,6 +166,41 @@ AsterPlot.prototype.change = function () {
       return self.arc(i(t));
     };
   });
+
+  // Create a thick white outline to give the impression hours are seperated.
+  var outerPath = this.svg.selectAll(".outlineArc")
+    .data([]);
+
+  outerPath.exit().remove();
+
+  outerPath.data(this.clockPie(this.hours))
+    .append("path")
+      .attr("fill", "none")
+      .attr("stroke", "white")
+      .attr("class", "outlineArc")
+      .attr("stroke-width", 5)
+      .attr("d", this.outlineArc); 
+
+  // Add clockface last to it is on top. :D
+  var face = this.svg.append('g')
+      .attr('id','clock-face')
+      .attr('transform','translate(0,0))');
+
+  face.selectAll('.hour-label')
+    .data(d3.range(0,24,1))
+      .enter()
+      .append('text')
+      .attr('class', 'hour-label')
+      .attr('text-anchor','middle')
+      .attr('x',function(d){
+        return self.hourLabelRadius * Math.sin(self.hourScale(d) * self.radians);
+      })
+      .attr('y',function(d){
+        return -self.hourLabelRadius * Math.cos(self.hourScale(d) * self.radians) + self.hourLabelYOffset;
+      })
+      .text(function(d){
+        return d;
+      });
 }
 
 /* * * * *
@@ -229,7 +269,13 @@ AsterPlot.prototype.drawGraph = function () {
       .attr("fill", function (d) { return self.colourScale(d.data.colour); })
       .attr("class", "solidArc")
       .attr("d", this.arc)
-      .each(function(d) { this._current = d; })
+      .each(function(d) { this._current = {
+          data : d.data,
+          value : d.value,
+          startAngle : d.startAngle,
+          endAngle : d.endAngle    
+        };
+      })
       .on('mouseover', this.tip.show)
       .on('mouseout', this.tip.hide);
 
