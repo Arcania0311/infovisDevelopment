@@ -1,4 +1,8 @@
-function AsterPlot () {
+function AsterPlot (container) {
+  if (container == null) {
+    container = "body"
+  }
+
   this.width = 600;
   this.height = 600;
   this.radius = Math.min(this.width, this.height) / 2;
@@ -14,6 +18,8 @@ function AsterPlot () {
     .range([0,165])
     .domain([0,11]);
 
+  this.colourScale = d3.scale.category10();
+
   // d3 piechart object.
   this.pie = d3.layout.pie()
     .sort(null)
@@ -24,12 +30,12 @@ function AsterPlot () {
     .value(function(d) { return 10; });
 
   // Tooltips are awesome.
-  // this.tip = d3.tip()
-  //   .attr('class', 'd3-tip')
-  //   .offset([0, 0])
-  //   .html(function (d) {
-  //     return d.data.name + ": <span style='color:green'>" + d.data.days[self.selectedDay] + "</span>";
-  //   });
+  this.tip = d3.tip()
+    .attr('class', 'd3-tip')
+    .offset([0, 0])
+    .html(function (d) {
+      return d.data.name + ": <span style='color:green'>" + d.data.days[self.selectedDay] + "</span>";
+    });
 
   // d3 arc objects.
   this.arc = d3.svg.arc()
@@ -43,13 +49,13 @@ function AsterPlot () {
     .outerRadius(this.radius);
 
   // The svg where the magic happens.
-  this.svg = d3.select("body").append("svg")
+  this.svg = d3.select(container).append("svg")
     .attr("width", this.width)
     .attr("height", this.height)
     .append("g")
     .attr("transform", "translate(" + this.width / 2 + "," + this.height / 2 + ")");
 
-  // this.svg.call(this.tip);
+  this.svg.call(this.tip);
 
   // Empty array to limit chart to 24 areas.
   this.hours = [];
@@ -98,6 +104,10 @@ AsterPlot.prototype.changeDay = function() {
       return self.arc(i(t));
     };
   });
+
+  // Centre text
+  this.svg.selectAll(".aster-score")
+      .text(this.week[this.selectedDay]);
 }
 
 AsterPlot.prototype.change = function () {
@@ -136,6 +146,8 @@ AsterPlot.prototype.change = function () {
  * strings with the names of the selection. Stores it in selectedData.
  */
 AsterPlot.prototype.selectData = function(selection) {
+  this.selectedData = [];
+
   for (var hour = 0; hour < 24; hour++) {
     for (city in selection.cities) {
       var hourCommits = [0, 0, 0, 0, 0, 0, 0]
@@ -147,10 +159,21 @@ AsterPlot.prototype.selectData = function(selection) {
       
       this.selectedData.push(
         {"name" : selection.cities[city],
+         "colour" : city,
          "days" : hourCommits.slice(0)
       });
     }
   }
+
+  // Find the largest data point in the selection.
+  this.largest = 0;
+  for (var i = this.selectedData.length - 1; i >= 0; i--) {
+    for (var j = 0; j < 7; j++) {
+      if (this.selectedData[i].days[j] > this.largest) {
+        this.largest = this.selectedData[i].days[j]
+      }
+    }
+  };
 };
 
 /* * * * *
@@ -162,25 +185,16 @@ AsterPlot.prototype.selectData = function(selection) {
 AsterPlot.prototype.drawGraph = function () {
   var self = this;
 
-  this.largest = 0;
-  for (var i = this.selectedData.length - 1; i >= 0; i--) {
-    for (var j = 0; j < 7; j++) {
-      if (this.selectedData[i].days[j] > this.largest) {
-        this.largest = this.selectedData[i].days[j]
-      }
-    }
-  };
-
   // Create the graph, duhr.
   var path = this.svg.selectAll(".solidArc")
       .data(this.pie(this.selectedData))
     .enter().append("path")
-      .attr("fill", function (d) { return "red"; })
+      .attr("fill", function (d) { return self.colourScale(d.data.colour); })
       .attr("class", "solidArc")
       .attr("d", this.arc)
-      .each(function(d) { this._current = d; });
-      // .on('mouseover', this.tip.show)
-      // .on('mouseout', this.tip.hide);
+      .each(function(d) { this._current = d; })
+      .on('mouseover', this.tip.show)
+      .on('mouseout', this.tip.hide);
 
   // Create a thick white outline to give the impression hours are seperated.
   var outerPath = this.svg.selectAll(".outlineArc")
@@ -193,21 +207,21 @@ AsterPlot.prototype.drawGraph = function () {
       .attr("d", this.outlineArc);  
 
   // Create a thin outline around the graph
-  var outerOuterPath = this.svg.selectAll(".outlineOutlineArc")
-      .data(this.clockPie(this.hours))
-    .enter().append("path")
-      .attr("fill", "none")
-      .attr("stroke", "lightgray")
-      .attr("class", "outlineArc")
-      .attr("stroke-width", 1)
-      .attr("d", this.outlineArc);  
+  // var outerOuterPath = this.svg.selectAll(".outlineOutlineArc")
+  //     .data(this.clockPie(this.hours))
+  //   .enter().append("path")
+  //     .attr("fill", "none")
+  //     .attr("stroke", "lightgray")
+  //     .attr("class", "outlineArc")
+  //     .attr("stroke-width", 1)
+  //     .attr("d", this.outlineArc);  
 
   // Centre text
   this.svg.append("svg:text")
       .attr("class", "aster-score")
       .attr("dy", ".35em")
       .attr("text-anchor", "middle") // text-align: right
-      .text("FUCK");
+      .text(this.week[this.selectedDay]);
 
   // Add clockface last to it is on top. :D
   var face = this.svg.append('g')
