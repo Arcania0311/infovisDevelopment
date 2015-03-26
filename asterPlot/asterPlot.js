@@ -18,8 +18,6 @@ function AsterPlot (container) {
     .range([0,165])
     .domain([0,11]);
 
-  this.colourScale = d3.scale.category10();
-
   // d3 piechart object.
   this.pie = d3.layout.pie()
     .sort(null)
@@ -145,7 +143,7 @@ AsterPlot.prototype.change = function () {
     .data(this.pie(this.selectedData));
 
   path.enter().append("path")
-    .attr("fill", function (d) { return self.colourScale(d.data.ID); })
+    .attr("fill", function (d) { return d.data.colour; })
     .attr("class", "solidArc")
     .attr("d", this.arc)
     .each(function(d) { this._current = {
@@ -252,7 +250,7 @@ AsterPlot.prototype.drawGraph = function () {
   var path = this.svg.selectAll(".solidArc")
       .data(this.pie(this.selectedData))
     .enter().append("path")
-      .attr("fill", function (d) { return self.colourScale(d.data.ID); })
+      .attr("fill", function (d) { return d.data.colour; })
       .attr("class", "solidArc")
       .attr("d", this.arc)
       .each(function(d) { this._current = {
