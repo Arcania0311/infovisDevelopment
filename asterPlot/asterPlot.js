@@ -167,16 +167,6 @@ AsterPlot.prototype.change = function () {
     };
   });
 
-  // Create a thick white outline to give the impression hours are seperated.
-  var outerPath = this.svg.append(".outlineArc")
-    .data(this.clockPie(this.hours))
-    .append("path")
-      .attr("fill", "none")
-      .attr("stroke", "white")
-      .attr("class", "outlineArc")
-      .attr("stroke-width", 5)
-      .attr("d", this.outlineArc); 
-
   // Add clockface last to it is on top. :D
   var face = this.svg.append('g')
       .attr('id','clock-face')
@@ -215,7 +205,6 @@ AsterPlot.prototype.selectData = function(selection) {
           hourCommits[this.week.indexOf(day)] += this.rawData[selection.cities[city].name][hour][selection.languages[lang]][day];
         }
       }
-      
       this.selectedData.push(
         {"name" : selection.cities[city].name,
          "maxIndex" : city,
@@ -237,7 +226,7 @@ AsterPlot.prototype.selectData = function(selection) {
   for (var i = selection.cities.length - 1; i >= 0; i--) {
     var temp = 0;
     for (var j = this.selectedData.length - 1; j >= 0; j--) {
-      if (this.selectedData[j].name != selection.cities[i]) {
+      if (this.selectedData[j].name != selection.cities[i].name) {
         continue;
       };
       for (var k = 0; k < 7; k++) {
