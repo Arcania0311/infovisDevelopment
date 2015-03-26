@@ -41,7 +41,11 @@ function AsterPlot (container) {
   this.arc = d3.svg.arc()
     .innerRadius(this.innerRadius)
     .outerRadius(function(d) {
-      return (((self.radius - self.innerRadius) / self.largest) * d.data.days[self.selectedDay]) + self.innerRadius; 
+      if (!this.relative) {
+        return (((self.radius - self.innerRadius) / self.largest) * d.data.days[self.selectedDay]) + self.innerRadius; 
+      } else {
+        return (((self.radius - self.innerRadius) / self.relLargest[d.data.colour]) * d.data.days[self.selectedDay]) + self.innerRadius;
+      }
     });
 
   this.outlineArc = d3.svg.arc()
@@ -78,6 +82,22 @@ function AsterPlot (container) {
   this.selectedDay = 0;
 
   this.largest = 0;
+  this.relLargest = [];
+
+  this.relative = false;
+}
+
+/* * * * *
+ * Selects relative or absolute view.
+ */
+AsterPlot.prototype.toggleView = function(view) {
+  if (view == "relative") {
+    this.relative = true;
+  } else if (view == "absolute") {
+    this.relative = false;
+  }
+
+  this.change();
 }
 
 /* * * * *
@@ -89,7 +109,7 @@ AsterPlot.prototype.selectDay = function(day) {
 }
 
 /* * * * *
- * Updates the graph with the newly selected data.
+ * Updates the graph with the newly selected day.
  */
 AsterPlot.prototype.changeDay = function() {
   var self = this;
@@ -110,6 +130,9 @@ AsterPlot.prototype.changeDay = function() {
       .text(this.week[this.selectedDay]);
 }
 
+/* * * * *
+ * Updates the graph with the newly selected data.
+ */
 AsterPlot.prototype.change = function () {
   var self = this;
 
@@ -119,14 +142,14 @@ AsterPlot.prototype.change = function () {
   path.enter().append("path")
     .attr("fill", function (d) { return "blue" })
     .attr("class", "solidArc")
-      .attr("d", this.arc)
-      .each(function(d) { this._current = {
-          data : d.data,
-          value : d.value,
-          startAngle : d.startAngle,
-          endAngle : d.endAngle    
-        }; 
-      });
+    .attr("d", this.arc)
+    .each(function(d) { this._current = {
+        data : d.data,
+        value : d.value,
+        startAngle : d.startAngle,
+        endAngle : d.endAngle    
+      }; 
+    });
 
   path.exit().remove();
 
@@ -173,6 +196,20 @@ AsterPlot.prototype.selectData = function(selection) {
         this.largest = this.selectedData[i].days[j]
       }
     }
+  };
+  for (var i = selection.cities.length - 1; i >= 0; i--) {
+    var temp = 0;
+    for (var j = this.selectedData.length - 1; j >= 0; j--) {
+      if (this.selectedData[j].name != selection.cities[i]) {
+        continue;
+      };
+      for (var k = 0; k < 7; k++) {
+        if (this.selectedData[j].days[k] > temp) {
+          temp = this.selectedData[j].days[k]
+        }
+      }
+    };
+  this.relLargest.unshift(temp)
   };
 };
 
