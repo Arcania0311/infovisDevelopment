@@ -47,8 +47,8 @@ svg.call(tip);
 var totalData;
 var data = [];
 
-d3.json('dataTest.json', function(error, temp) {
-  totalData = temp.amsterdam;
+d3.json('dataTest.json', function(error, totalData) {
+  totalData = totalData.amsterdam;
   data = compareData([totalData.Mon, totalData.Tue]);
   drawGraph();
   
@@ -99,6 +99,7 @@ function compareData (cities) {
   return data;
 }
 
+// Deprecated. Produces overlay graph brain aids.
 function sortData () {
   for (var i = 0; i < 24; i++) {
     
@@ -121,9 +122,7 @@ function sortData () {
     for (var index in data) {
       data[index].JavaScript.hours[i] = temp[index]
     }
-
   }
-
 }
 
 var colour = ["red", "blue"]
@@ -131,7 +130,6 @@ var hours = [];
 for (var i = 0; i < 24; i++) {
   hours.push(i)
 };
-
 
 function drawGraph() {
 

@@ -1,23 +1,43 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
+
+# Set with the predefined top 10 languages
+topLangs = {"JavaScript", "Ruby", "Python", "Java", "PHP", "CSS", "Shell", "C++", "C", "Objective-C"}
+weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+utcOffset = {
+  "amsterdam" : 1,
+  "bangalore" : 5.5,
+  "beijing"   : 8,
+  "berlin"    : 1,
+  "london"    : 0,
+  "madrid"    : 1,
+  "moon"      : 0,
+  "moscow"    : 3,
+  "newYork"   : -5,
+  "paris"     : 1,
+  "sanFrancisco" : -7,
+  "stockholm" : 1,
+  "sydney" : 10,
+  "tokyo" : 9
+}
 
 def convertDate(date):
   result = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
   return result
 
-def newDay():
-  day = []
+def newCity():
+  city = []
   for i in xrange(24):
     hour = {}
-    hour["name"] = str(i)
-    hour["commits"] = 0
-    day.append(hour)
+    for lang in topLangs:
+      hour[lang] = {}
+      for day in weekDays:
+        hour[lang][day] = 0
 
-  return day
+    city.append(hour)
 
-# Set with the predefined top 10 languages
-topLangs = {"JavaScript", "Ruby", "Python", "Java", "PHP", "CSS", "Shell", "C++", "C", "Objective-C"}
-weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+  return city
+
 
 cityFile = open("totalsPerCity.json")
 cityData = json.load(cityFile)
@@ -27,13 +47,7 @@ finalData = {}
 
 for city in cityData:
 
-  citiesData = {"Mon" : {}, "Tue" : {}, "Wed" : {}, "Thu" : {}, "Fri" : {}, "Sat" : {}, "Sun" : {}}
-
-  for days in citiesData:
-    for lang in topLangs:
-      citiesData[days][lang] = {}
-      citiesData[days][lang]["name"] = lang
-      citiesData[days][lang]["hours"] = newDay()
+  finalData[city] = newCity()
 
   filepath = "results/" + city + "/" + city + "Clean.json"
 
@@ -48,19 +62,10 @@ for city in cityData:
       continue
 
     dateTime = convertDate(item["created_at"])
+    dateTime = dateTime + timedelta(hours=utcOffset[city])
     day = weekDays[dateTime.weekday() - 1]
     
-    citiesData[day][lang]["hours"][dateTime.hour]["commits"] += 1
-
-  for day in weekDays:
-    dailyTotal = 0
-    for lang in topLangs:
-      for hour in citiesData[day][lang]["hours"]:
-        dailyTotal += hour["commits"]
-
-      citiesData[day][lang]["total"] = round(float(dailyTotal) / 24.0, 2)
-
-  finalData[city] = citiesData
+    finalData[city][dateTime.hour][lang][day] += 1
 
 outFinal = "asterPlot/dataTest.json"
 with open(outFinal, "w") as outfile:
