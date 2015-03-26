@@ -145,7 +145,7 @@ AsterPlot.prototype.change = function () {
     .data(this.pie(this.selectedData));
 
   path.enter().append("path")
-    .attr("fill", function (d) { return self.colourScale(d.data.colour); })
+    .attr("fill", function (d) { return self.colourScale(d.data.ID); })
     .attr("class", "solidArc")
     .attr("d", this.arc)
     .each(function(d) { this._current = {
@@ -252,7 +252,7 @@ AsterPlot.prototype.drawGraph = function () {
   var path = this.svg.selectAll(".solidArc")
       .data(this.pie(this.selectedData))
     .enter().append("path")
-      .attr("fill", function (d) { return self.colourScale(d.data.colour); })
+      .attr("fill", function (d) { return self.colourScale(d.data.ID); })
       .attr("class", "solidArc")
       .attr("d", this.arc)
       .each(function(d) { this._current = {
