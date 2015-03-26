@@ -63,6 +63,7 @@ for city in cityData:
 
     dateTime = convertDate(item["created_at"])
     dateTime = dateTime + timedelta(hours=utcOffset[city])
+    datetime = dateTime + timedelta(days=1)
     day = weekDays[dateTime.weekday() - 1]
     
     finalData[city][dateTime.hour][lang][day] += 1
