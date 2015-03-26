@@ -18,6 +18,8 @@ function AsterPlot (container) {
     .range([0,165])
     .domain([0,11]);
 
+    this.colourScale = d3.scale.category10();
+
   // d3 piechart object.
   this.pie = d3.layout.pie()
     .sort(null)
