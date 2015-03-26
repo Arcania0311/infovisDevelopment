@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 # Set with the predefined top 10 languages
 topLangs = {"JavaScript", "Ruby", "Python", "Java", "PHP", "CSS", "Shell", "C++", "C", "Objective-C"}
-weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+weekDays = ["Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Mon"]
 utcOffset = {
   "amsterdam" : 1,
   "bangalore" : 5.5,
@@ -63,7 +63,6 @@ for city in cityData:
 
     dateTime = convertDate(item["created_at"])
     dateTime = dateTime + timedelta(hours=utcOffset[city])
-    datetime = dateTime + timedelta(days=1)
     day = weekDays[dateTime.weekday() - 1]
     
     finalData[city][dateTime.hour][lang][day] += 1
